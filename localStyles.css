@@ -1,0 +1,25 @@
+
+
+ul{
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: none;
+}
+
+#list > li{
+	padding: 12px;
+}
+
+
+label{
+	display: block;
+}
+
+input, select{
+	display: block;
+	width: 100%;
+	margin-bottom: 24px;
+	height: 40px
+}
+

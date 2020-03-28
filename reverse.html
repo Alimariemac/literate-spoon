@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+	<title>FF Template</title>
+	<!-- Bootstrap -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+		integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+	<!-- Global Styles -->
+	<link rel="stylesheet" type="text/css" href="https://ff-master-template.netlify.com/global.css">
+	<!-- Local Styles -->
+	<link rel="stylesheet" type="text/css" href="localStyles.css">
+	<!-- Vue -->
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<!-- jQuery -->
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<!-- P5 -->
+	<script src="https://cdn.jsdelivr.net/npm/p5@1.0.0/lib/p5.js"></script>
+</head>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 ff-spacer">
+            <ul class="nav nav-pills">
+                <li class="nav-item">
+                <a class="nav-link" href="index.html">Lat Long</a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link active" href="#">Hexcode</a>
+                </li>
+            </div>
+    </div>
+
+		<div class="row">
+			<div class="col-md-4 ff-spacer">
+				<div class="ff-form__color">
+					<label for="hexcode">Hexcode</label>
+					<input type="text" name="hexcode" id="hexcode">
+					<button onclick="getCity()" class="ff-button-primary">Get City!</button>
+				</div>
+			</div>
+			<div class="col-md-8 col-sm-12  ff-spacer" id="mainColor" v-bind:style={backgroundColor:color}>
+				</div>
+
+			</div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12 ff-spacer">
+            <div id="app">
+                <ul id="list">
+                    <li v-for="(i,index) in colors" v-bind:style="{backgroundColor: i.color, color:i.contrast}"
+                        :key=`${i.name}-${componentKey}-${index}`>
+                        {{i.color}} - {{i.name}} - {{componentKey}}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div> 
+</body>
+<!-- Local JS -->
+<script type="text/javascript" src="index.js"></script>
+
+</html>
