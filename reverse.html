@@ -36,11 +36,30 @@
 			<div class="col-md-4 ff-spacer">
 				<div class="ff-form__color">
 					<label for="hexcode">Hexcode</label>
-					<input type="text" name="hexcode" id="hexcode">
+                    <input type="text" name="hexcode" id="hexcode">
+                    <div class="btn-group btn-group-toggle" id = "verticalChoices" data-toggle="buttons">
+                        <label class="btn btn-secondary active">
+                          <input type="radio" name="options" id="north" autocomplete="off" > + Lat
+                        </label>
+                        <label class="btn btn-secondary">
+                          <input type="radio" name="options" id="south" autocomplete="off"> - Lat
+                        </label>
+                      </div>
+                      <div class="btn-group btn-group-toggle" id = "horizontalChoices" data-toggle="buttons">
+                        <label class="btn btn-secondary active">
+                          <input type="radio" name="options" id="east" autocomplete="off" > + Long
+                        </label>
+                        <label class="btn btn-secondary">
+                          <input type="radio" name="options" id="west" autocomplete="off"> - Long
+                        </label>
+                      </div>
+                      
+                    
 					<button onclick="getCity()" class="ff-button-primary">Get City!</button>
 				</div>
 			</div>
-			<div class="col-md-8 col-sm-12  ff-spacer" id="mainColor" v-bind:style={backgroundColor:color}>
+			<div class="col-md-8 col-sm-12  ff-spacer" id="hexColor" v-bind:style="{backgroundColor:color}">
+                <h3>{{lat}},{{long}}</h3>
 				</div>
 
 			</div>
@@ -48,11 +67,11 @@
     <div class="row">
         <div class="col-sm-12 ff-spacer">
             <div id="app">
-                <ul id="list">
-                    <li v-for="(i,index) in colors" v-bind:style="{backgroundColor: i.color, color:i.contrast}"
-                        :key=`${i.name}-${componentKey}-${index}`>
-                        {{i.color}} - {{i.name}} - {{componentKey}}
-                    </li>
+                <ul id="cities">
+                    <li v-for="(i,index) in cities"
+                    :key=`${i.name}-${componentKey}-${index}` style="background-color: aliceblue; color: black;">
+                    {{i.city}} - {{i.country}} : {{i.lat}},{{i.long}}
+                </li>
                 </ul>
             </div>
         </div>

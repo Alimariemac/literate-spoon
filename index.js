@@ -3,6 +3,39 @@
 let url = "http://www.colr.org/json/color/ffba13"
 var data;
 var colorArray = []
+var cityArray= []
+var latMult = 45.5
+var longMult = 22.75
+
+
+var north = $("#north")
+var east =$("#east")
+
+$("#verticalChoices .btn").click(toggles)
+$("#horizontalChoices .btn").click(toggles)
+//deal with toggles
+function toggles(){
+	$(this).addClass('active').siblings().removeClass('active')
+}
+
+//check if positive or negative
+function posCheck(a){	
+	if(a.parents(".btn").hasClass('active')){
+		return "+"
+	}
+	return "-"
+}
+
+//remove char before 
+function removeChar(c){
+	var ex = new RegExp(/[-#+]/);
+	if(ex.test(c.charAt(0))){
+		return (c.substring(1))
+	}
+	console.log(c)
+	return(c)	
+}
+
 
 //create color scheme
 
@@ -10,26 +43,16 @@ function getColorScheme(){
 	//highest lat and long = 4095
 	//multiply 90 by 45.4
 	//multiply 180 by 22.75
+	var lat = removeChar($('#lat').val())
+	var long = removeChar($('#long').val())
+	var latHex = d2h(lat,latMult)
+	var longHex = d2h(long,longMult)
+	var picker = `#${latHex}${longHex}`
 
-	var latMult = 45.5
-	var longMult = 22.75
-	var lat = parseInt($('#lat').val())*latMult
-	var long = parseInt($('#long').val())*longMult
 	const myApp =  $('#list')
-	var picker = d2h(lat,long)
-	console.log(picker)
-	// console.log(picker2)
-	// show2Colors(picker,picker2)
-	// console.log(`linear-gradient(${picker},${picker2})`)
-	
-
-//get color palette 
-
 	var splitPicker = picker.split("#")
 	var mode = $("#mode").val()
 	var count = $("#count").val()
-
-
 
 	var settings = {
 		"url": `http://127.0.0.1:3000/colors/${splitPicker[1]}/${mode}/${count}`,
@@ -56,59 +79,82 @@ function getColorScheme(){
 
 }
 
+//decimal to hexcode
+function d2h(l,m){
+	var lAsInt = parseInt(l*m)
+	var lAsHex = lAsInt.toString(16);
+		while(lAsHex.length < 3){
+			lAsHex = "0" + lAsHex
+		}
+	var lShort = lAsHex.slice(0,3)
+	return (lShort)
+}
+
+//hexcode to decimal
+function h2d(hex, num, dir,m){
+	let hexSlice = ""
+	if(num > 0){
+		hexSlice = hex.slice(0,num)
+	}
+	else{
+		hexSlice = hex.slice(num)
+	}
+	var l = parseInt(hexSlice,16)/m
+	var lFront = posCheck(dir)
+	console.log(`${lFront}${l}`)
+	return(`${lFront}${l}`)
+
+}
+
 //get city closest to lat long function
 function getCity(){
-	var latMult = 45.5
-	var longMult = 22.75
-	var reverseHexcode = $("#hexcode").val()
-	var hexBeg = reverseHexcode.slice(0,3)
-	var hexEnd = reverseHexcode.slice(-3)
-	var lat = parseInt(hexBeg,16)/latMult
-	var long = parseInt(hexEnd,16)/longMult
-	toDecimal = `this is the lat ${lat} , this is the long ${long} this is reverseHexcode ${reverseHexcode}`
+	
+	const myCities= $('#cities')
+	var reverseHexcode = removeChar($("#hexcode").val())
+	
+	var latAnswer=h2d(reverseHexcode,3,north,latMult)
+	var longAnswer=h2d(reverseHexcode,-3,east,longMult)
+
+	toDecimal = `this is the lat ${latAnswer} , this is the long ${longAnswer} this is reverseHexcode ${reverseHexcode}`
 	console.log(toDecimal)
 
-	// var settings = {
-	// 	"url": `http://geodb-free-service.wirefreethought.com/v1/geo/locations/40.744589-74.032514/nearbyCities?limit=5&offset=0&minPopulation=200000&radius=100'`,
-	// 	"method": "GET",
-	// 	"headers": {"Access-Control-Allow-Origin": "*"},
-	// 	"timeout": 0,
-	// };
-	// $.ajax(settings).done(function (response) {
-	//   console.log(response);
+	var settings = {
+		"url": `http://geodb-free-service.wirefreethought.com/v1/geo/locations/${latAnswer}${longAnswer}/nearbyCities?limit=5&offset=0&radius=100000`,
+		"method": "GET",
+		"headers": {"Access-Control-Allow-Origin": "*"},
+		"timeout": 0,
+	};
+	$.ajax(settings).done(function (response) {
+	  console.log(response.data);
+	  var cities = response.data
+	  for(var i =0; i< cities.length; i++)
+	  {	
+		  let city = cities[i].city
+		  let country = cities[i].country
+		  let lat2 = cities[i].latitude
+		  let long2 = cities[i].longitude
+		  let index = {city: city, country: country, lat:lat2, long:long2};
+		  cityArray.unshift(index)
+	  }
+	  myCities.show()
+	  getCities(cityArray,reverseHexcode, latAnswer,longAnswer)
 
-
-	// // });
-
-	// });
+	});
 }
 
-function d2h(lat,long){
-	var latAsHex = lat.toString(16);
-	var longAsHex = long.toString(16)
 
-		while(latAsHex.length < 3){
-			latAsHex = "0" + latAsHex
-		}
-
-		while(longAsHex.length < 3){
-			longAsHex = "0" + longAsHex
-		}
-	var latShort = latAsHex.slice(0,3)
-	var longShort = longAsHex.slice(0,3)
-
-	hexCode = `${latShort}${longShort}`
-	console.log(long, longAsHex, longShort, lat, latAsHex, latShort)
-	return ("#"+hexCode)
-
-}
-
-function show2Colors(picker, picker2){
+function getCities(cityArray, reverseHexcode, lat, long){
 	new Vue({
-		el:"#mainColor",
-		data:{
-		gradient:`linear-gradient(${this.picker},${this.picker2})`
-	}
+		el:"#cities",
+		data(){
+			return{componentKey:0,cities:cityArray}
+		}
+	}),
+	new Vue({
+		el:"#hexColor",
+		data(){
+			return{color:`#${reverseHexcode}`, lat:lat, long:long}
+		}
 	})
 }
 
