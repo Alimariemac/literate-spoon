@@ -4,21 +4,22 @@ let url = "http://www.colr.org/json/color/ffba13"
 var data;
 var colorArray = []
 var cityArray= []
+//highest lat and long = 4095
+//multiply 90 by 45.4
+//multiply 180 by 22.75
 var latMult = 45.5
 var longMult = 22.75
-
-
 var north = $("#north")
 var east =$("#east")
 
+//DEAL WITH TOGGLES
 $("#verticalChoices .btn").click(toggles)
 $("#horizontalChoices .btn").click(toggles)
-//deal with toggles
 function toggles(){
 	$(this).addClass('active').siblings().removeClass('active')
 }
 
-//check if positive or negative
+//CHECK IF POSITIVE/NEGATIVE
 function posCheck(a){	
 	if(a.parents(".btn").hasClass('active')){
 		return "+"
@@ -26,7 +27,7 @@ function posCheck(a){
 	return "-"
 }
 
-//remove char before 
+//REMOVE CHAR BEFORE
 function removeChar(c){
 	var ex = new RegExp(/[-#+]/);
 	if(ex.test(c.charAt(0))){
@@ -37,12 +38,9 @@ function removeChar(c){
 }
 
 
-//create color scheme
-
+//CREATE COLOR SCHEME
 function getColorScheme(){
-	//highest lat and long = 4095
-	//multiply 90 by 45.4
-	//multiply 180 by 22.75
+
 	var lat = removeChar($('#lat').val())
 	var long = removeChar($('#long').val())
 	var latHex = d2h(lat,latMult)
@@ -79,7 +77,7 @@ function getColorScheme(){
 
 }
 
-//decimal to hexcode
+//DECIMAL TO HEXCODE
 function d2h(l,m){
 	var lAsInt = parseInt(l*m)
 	var lAsHex = lAsInt.toString(16);
@@ -90,7 +88,7 @@ function d2h(l,m){
 	return (lShort)
 }
 
-//hexcode to decimal
+//HEXCODE TO DECIMAL
 function h2d(hex, num, dir,m){
 	let hexSlice = ""
 	if(num > 0){
@@ -106,7 +104,7 @@ function h2d(hex, num, dir,m){
 
 }
 
-//get city closest to lat long function
+//GET CITIES CLOSEST TO LAT LONG
 function getCity(){
 	
 	const myCities= $('#cities')
@@ -119,7 +117,7 @@ function getCity(){
 	console.log(toDecimal)
 
 	var settings = {
-		"url": `http://geodb-free-service.wirefreethought.com/v1/geo/locations/${latAnswer}${longAnswer}/nearbyCities?limit=5&offset=0&radius=100000`,
+		"url": `http://geodb-free-service.wirefreethought.com/v1/geo/locations/${latAnswer}${longAnswer}/nearbyCities?limit=10&offset=0&radius=100000`,
 		"method": "GET",
 		"headers": {"Access-Control-Allow-Origin": "*"},
 		"timeout": 0,
@@ -142,6 +140,7 @@ function getCity(){
 	});
 }
 
+//UPDATE UI
 
 function getCities(cityArray, reverseHexcode, lat, long){
 	new Vue({
